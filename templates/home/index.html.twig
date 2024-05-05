@@ -5,7 +5,12 @@
 
 {% block body %}
 
-	<h1>Hello kanban</h1>
-
+	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		{% include 'project/index.html.twig' %}
+	{% else %}
+		<p>
+			faire un design pour la connexion
+		</p>
+	{% endif %}
 
 {% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Column
+{% endblock %}
+
+{% block body %}
+	<h1>Edit Column</h1>
+
+	{{ include('column/_form.html.twig', {'button_label': 'Update'}) }}
+
+	<a class="btn btn-info mt-2" href="{{ path('project.show', {'id': project.id}) }}">back to list</a>
+
+	{{ include('column/_delete_form.html.twig') }}
+{% endblock %}

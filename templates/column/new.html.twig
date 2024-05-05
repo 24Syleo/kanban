@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Column
+{% endblock %}
+
+{% block body %}
+	<h1>Create new Column</h1>
+
+	{{ include('column/_form.html.twig') }}
+
+	<a href="{{ path('project.show', { 'id': project.id }) }}">back to list</a>
+{% endblock %}
