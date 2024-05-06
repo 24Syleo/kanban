@@ -4,11 +4,13 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Edit Project</h1>
+	<h1>Edit
+		{{ project.title }}</h1>
 
 	{{ include('project/_form.html.twig', {'button_label': 'Update'}) }}
 
-	<a class="btn btn-info mt-2" href="{{ path('home') }}">back to list</a>
+	<a class="btn btn-info mt-2" href="{{ path('project.show', {'id':project.id}) }}">back to
+		{{ project.title }}</a>
 
 	{{ include('project/_delete_form.html.twig') }}
 {% endblock %}

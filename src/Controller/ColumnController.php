@@ -29,6 +29,7 @@ class ColumnController extends AbstractController
             $entityManager->persist($column);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Column created');
             return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
         }
 
@@ -49,6 +50,7 @@ class ColumnController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Column edited successfully');
             return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
         }
 
@@ -67,7 +69,7 @@ class ColumnController extends AbstractController
             $entityManager->remove($column);
             $entityManager->flush();
         }
-
+        $this->addFlash('danger', 'Column deleted successfully');
         return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
     }
 }

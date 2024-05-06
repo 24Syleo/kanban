@@ -5,6 +5,8 @@
 	<div class="col">
 		<h2>{{ column.title }}</h2>
 		<a class="fst-italic" href="{{ path('column.edit', { 'id': project.id, 'column_id': column.id }) }}">edit</a>
+		<a class="fst-italic text-warning" href="{{ path('task.new', { 'id': project.id, 'column_id': column.id }) }}">add task</a>
+		{% include 'task/index.html.twig' %}
 	</div>
 {% else %}
 	<div class="alert alert-info">

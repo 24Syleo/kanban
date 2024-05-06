@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Task
+{% endblock %}
+
+{% block body %}
+	<h1>Create new Task</h1>
+
+	{{ include('task/_form.html.twig') }}
+
+	<a class="btn btn-infos" href="{{ path('project.show', {'id':project.id}) }}">back to list</a>
+{% endblock %}

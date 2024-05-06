@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Form\ProjectType;
 use App\Repository\ColumnRepository;
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,15 +43,17 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Project $project, ColumnRepository $colRepo): Response
+    public function show(Project $project, ColumnRepository $colRepo, TaskRepository $taskRepo): Response
     {
         $columns = $colRepo->getColumnsByProject($project);
+        $tasks = $taskRepo->findAll();
         if (!$columns) {
             $columns = [];
         }
         return $this->render('project/show.html.twig', [
             'project' => $project,
-            'columns' => $columns
+            'columns' => $columns,
+            'tasks' => $tasks
         ]);
     }
 
