@@ -4,18 +4,21 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Register</h1>
 
-	{{ form_errors(registrationForm) }}
+	<section class="box mt-3">
+		<h1>Register</h1>
 
-	{{ form_start(registrationForm) }}
-	{{ form_row(registrationForm.pseudo) }}
-	{{ form_row(registrationForm.email) }}
-	{{ form_row(registrationForm.plainPassword, {
+		{{ form_errors(registrationForm) }}
+
+		{{ form_start(registrationForm) }}
+		{{ form_row(registrationForm.pseudo) }}
+		{{ form_row(registrationForm.email) }}
+		{{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
-	{{ form_row(registrationForm.agreeTerms) }}
+		{{ form_row(registrationForm.agreeTerms) }}
 
-	<button type="submit" class="btn btn-success">Register</button>
-	{{ form_end(registrationForm) }}
+		<button type="submit" class="btn btn-success">Register</button>
+		{{ form_end(registrationForm) }}
+	</section>
 {% endblock %}
