@@ -22,6 +22,8 @@ class ColumnRepository extends ServiceEntityRepository
     public function getColumnsByProject($project): array
     {
         return $this->createQueryBuilder('c')
+            ->leftJoin('c.tasks', 't')
+            ->addSelect('t')
             ->andWhere('c.project = :project')
             ->setParameter('project', $project)
             ->orderBy('c.id', 'ASC')

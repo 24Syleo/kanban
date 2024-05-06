@@ -46,14 +46,13 @@ class ProjectController extends AbstractController
     public function show(Project $project, ColumnRepository $colRepo, TaskRepository $taskRepo): Response
     {
         $columns = $colRepo->getColumnsByProject($project);
-        $tasks = $taskRepo->findAll();
+        // $tasks = $taskRepo->findAll();
         if (!$columns) {
             $columns = [];
         }
         return $this->render('project/show.html.twig', [
             'project' => $project,
-            'columns' => $columns,
-            'tasks' => $tasks
+            'columns' => $columns
         ]);
     }
 
