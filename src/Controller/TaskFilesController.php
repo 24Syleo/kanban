@@ -26,51 +26,14 @@ class TaskFilesController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/{taskFile_id}', name: 'show', methods: ['GET'])]
+    public function show(TaskFilesRepository $fileRepo, int $taskFile_id, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id,): Response
     {
-        $taskFile = new TaskFiles();
-        $form = $this->createForm(TaskFilesType::class, $taskFile);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($taskFile);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_task_files_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('task_files/new.html.twig', [
-            'task_file' => $taskFile,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(TaskFiles $taskFile): Response
-    {
+        $column = $colRepo->find($column_id);
+        $task = $taskRepo->find($task_id);
+        $taskFile = $fileRepo->find($taskFile_id);
         return $this->render('task_files/show.html.twig', [
             'task_file' => $taskFile,
-        ]);
-    }
-
-    #[Route('/{taskFile_id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, TaskFilesRepository $fileRepo, int $taskFile_id, EntityManagerInterface $entityManager, Project $project, int $task_id): Response
-    {
-        $taskFile = $fileRepo->find($taskFile_id);
-        $form = $this->createForm(TaskFilesType::class, $taskFile);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Fichier ajouté');
-            return $this->redirectToRoute('task.show', ['task_id' => $task_id], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('task_files/edit.html.twig', [
-            'task_file' => $taskFile,
-            'form' => $form,
         ]);
     }
 

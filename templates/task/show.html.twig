@@ -24,6 +24,8 @@
 		<div class="col-sm-3">
 			Avant le :
 			<span class="fst-italic">{{ task.deadLine ? task.deadLine|date('Y-m-d H:i:s') : '' }}</span>
+			{{ include('task_files/_form.html.twig') }}
+			{{ include('task_files/index.html.twig') }}
 		</div>
 	</div>
 

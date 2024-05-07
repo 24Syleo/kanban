@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Project;
 use App\Entity\Task;
 use App\Form\TaskType;
-use App\Repository\ColumnRepository;
+use App\Entity\Project;
+use App\Entity\TaskFiles;
+use App\Form\TaskFilesType;
 use App\Repository\TaskRepository;
+use App\Repository\ColumnRepository;
+use App\Repository\TaskFilesRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/project/{id}/column/{column_id}/task', name: 'task.')]
 class TaskController extends AbstractController
@@ -41,15 +44,30 @@ class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{task_id}', name: 'show', methods: ['GET'])]
-    public function show(TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
+    #[Route('/{task_id}', name: 'show', methods: ['GET', 'POST'])]
+    public function show(Request $request, EntityManagerInterface $entityManager, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id, TaskFilesRepository $taskFilesRepository): Response
     {
         $column = $colRepo->find($column_id);
         $task = $taskRepo->find($task_id);
+        $task_files = $taskFilesRepository->findAll();
+
+        $taskFile = new TaskFiles();
+        $form = $this->createForm(TaskFilesType::class, $taskFile);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $taskFile->setTask($task);
+            $entityManager->persist($taskFile);
+            $entityManager->flush();
+            $this->addFlash('success', 'fichier ajouté');
+            return $this->redirectToRoute('task.show', ["id" => $project->getId(), "column_id" => $column_id, 'task_id' => $task_id], Response::HTTP_SEE_OTHER);
+        }
         return $this->render('task/show.html.twig', [
             'task' => $task,
             'project' => $project,
             'column' => $column,
+            'form' => $form,
+            'task_files' => $task_files
         ]);
     }
 
