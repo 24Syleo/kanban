@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TaskFiles{% endblock %}
+
+{% block body %}
+    <h1>Edit TaskFiles</h1>
+
+    {{ include('task_files/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_task_files_index') }}">back to list</a>
+
+    {{ include('task_files/_delete_form.html.twig') }}
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,6 +33,17 @@ class Task
     #[ORM\ManyToOne(inversedBy: 'tasks')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Column $position = null;
+
+    /**
+     * @var Collection<int, TaskFiles>
+     */
+    #[ORM\OneToMany(targetEntity: TaskFiles::class, mappedBy: 'task')]
+    private Collection $taskFiles;
+
+    public function __construct()
+    {
+        $this->taskFiles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -81,6 +94,36 @@ class Task
     public function setPosition(?Column $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TaskFiles>
+     */
+    public function getTaskFiles(): Collection
+    {
+        return $this->taskFiles;
+    }
+
+    public function addTaskFile(TaskFiles $taskFile): static
+    {
+        if (!$this->taskFiles->contains($taskFile)) {
+            $this->taskFiles->add($taskFile);
+            $taskFile->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTaskFile(TaskFiles $taskFile): static
+    {
+        if ($this->taskFiles->removeElement($taskFile)) {
+            // set the owning side to null (unless already changed)
+            if ($taskFile->getTask() === $this) {
+                $taskFile->setTask(null);
+            }
+        }
 
         return $this;
     }

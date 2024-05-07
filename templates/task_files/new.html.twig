@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New TaskFiles{% endblock %}
+
+{% block body %}
+    <h1>Create new TaskFiles</h1>
+
+    {{ include('task_files/_form.html.twig') }}
+
+    <a href="{{ path('app_task_files_index') }}">back to list</a>
+{% endblock %}
