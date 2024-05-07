@@ -4,7 +4,7 @@
 			<h5 class="card-title">{{ task.title }}</h5>
 			<h6 class="card-subtitle mb-2 text-body-secondary">{{ task.deadLine ? task.deadLine|date('Y-m-d H:i:s') : '' }}</h6>
 			<p class="card-text">{{ task.content }}</p>
-			<a class="btn btn-infos" href="{{ path('task.show', {'id': project.id, 'column_id': column.id, 'task_id': task.id}) }}">task show</a>
+			<a class="btn btn-info" href="{{ path('task.show', {'id': project.id, 'column_id': column.id, 'task_id': task.id}) }}">task show</a>
 			<a class="btn btn-primary" href="{{ path('task.edit', {'id': project.id, 'column_id': column.id, 'task_id': task.id}) }}">task edit</a>
 		</div>
 

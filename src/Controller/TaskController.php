@@ -22,7 +22,7 @@ class TaskController extends AbstractController
     {
         $column = $colRepo->find($column_id);
         $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
+        $form = $this->createForm(TaskType::class, $task, ['projet' => $project]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -58,7 +58,7 @@ class TaskController extends AbstractController
     {
         $column = $colRepo->find($column_id);
         $task = $taskRepo->find($task_id);
-        $form = $this->createForm(TaskType::class, $task);
+        $form = $this->createForm(TaskType::class, $task, ['projet' => $project]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
