@@ -31,6 +31,7 @@ class TaskType extends AbstractType
                         ->orderBy('c.title', 'ASC');
                 },
                 'choice_label' => 'title',
+                'autocomplete' => true,
             ])
             ->add('deadLine', null, [
                 'widget' => 'single_text',
