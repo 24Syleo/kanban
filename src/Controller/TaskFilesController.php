@@ -27,25 +27,26 @@ class TaskFilesController extends AbstractController
     }
 
     #[Route('/{taskFile_id}', name: 'show', methods: ['GET'])]
-    public function show(TaskFilesRepository $fileRepo, int $taskFile_id, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id,): Response
+    public function show(TaskFilesRepository $fileRepo, int $taskFile_id, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
     {
         $column = $colRepo->find($column_id);
         $task = $taskRepo->find($task_id);
         $taskFile = $fileRepo->find($taskFile_id);
         return $this->render('task_files/show.html.twig', [
             'task_file' => $taskFile,
+            'project' => $project,
+            'column' => $column,
+            'task' => $task
         ]);
     }
 
     #[Route('/{taskFile_id}', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, TaskFilesRepository $fileRepo, int $taskFile_id, TaskFiles $taskFile, EntityManagerInterface $entityManager, Project $project): Response
+    public function delete(Request $request, TaskFilesRepository $fileRepo, int $taskFile_id, EntityManagerInterface $entityManager, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
     {
         $taskFile = $fileRepo->find($taskFile_id);
-        if ($this->isCsrfTokenValid('delete' . $taskFile->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($taskFile);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('project.show', ['id' => $project->getId()], Response::HTTP_SEE_OTHER);
+        $entityManager->remove($taskFile);
+        $entityManager->flush();
+        $this->addFlash('danger', 'fichier supprimé');
+        return $this->redirectToRoute('project.show', ["id" => $project->getId(), "column_id" => $column_id, 'task_id' => $task_id], Response::HTTP_SEE_OTHER);
     }
 }

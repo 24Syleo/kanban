@@ -22,7 +22,7 @@ class TaskFiles
     #[Vich\UploadableField(mapping: 'files', fileNameProperty: 'filesName')]
     private ?File $taskFile = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $filesName = null;
 
     #[ORM\ManyToOne(inversedBy: 'taskFiles')]
@@ -62,7 +62,7 @@ class TaskFiles
         return $this->taskFile;
     }
 
-    public function setTaskFile(?File $taskFile): static
+    public function setTaskFile(?File $taskFile = null): static
     {
         $this->taskFile = $taskFile;
 
