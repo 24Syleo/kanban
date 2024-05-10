@@ -2,16 +2,17 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Project;
 use App\Form\ProjectType;
-use App\Repository\ColumnRepository;
 use App\Repository\TaskRepository;
+use App\Repository\ColumnRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/project', name: 'project.')]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -27,13 +28,18 @@ class ProjectController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $project->setUser($user);
-            $project->setCreatedAt(new \DateTimeImmutable());
-            $entityManager->persist($project);
-            $entityManager->flush();
+            try {
 
-            $this->addFlash('success', 'Projet créer');
-            return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+                $project->setUser($user);
+                $project->setCreatedAt(new \DateTimeImmutable());
+                $entityManager->persist($project);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Projet créer');
+                return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+            }catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            } 
         }
 
         return $this->render('project/new.html.twig', [
@@ -63,10 +69,15 @@ class ProjectController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            try {
 
-            $this->addFlash('success', 'Projet éditer');
-            return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Projet éditer');
+                return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+            }catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
 
         return $this->render('project/edit.html.twig', [
@@ -79,9 +90,14 @@ class ProjectController extends AbstractController
     public function delete(Request $request, Project $project, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $project->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($project);
-            $this->addFlash('danger', 'Projet supprimer');
-            $entityManager->flush();
+            try {
+
+                $entityManager->remove($project);
+                $this->addFlash('danger', 'Projet supprimer');
+                $entityManager->flush();
+            } catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
 
         return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);

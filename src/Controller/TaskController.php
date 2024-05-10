@@ -11,6 +11,7 @@ use App\Repository\TaskRepository;
 use App\Repository\ColumnRepository;
 use App\Repository\TaskFilesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,12 +30,17 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $task->setPosition($column);
-            $entityManager->persist($task);
-            $entityManager->flush();
+            try {
 
-            $this->addFlash('success', 'Task created');
-            return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
+                $task->setPosition($column);
+                $entityManager->persist($task);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Task created');
+                return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
+            }catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
 
         return $this->render('task/new.html.twig', [
@@ -56,11 +62,15 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $taskFile->setTask($task);
-            $entityManager->persist($taskFile);
-            $entityManager->flush();
-            $this->addFlash('success', 'fichier ajouté');
-            return $this->redirectToRoute('task.show', ["id" => $project->getId(), "column_id" => $column_id, 'task_id' => $task_id], Response::HTTP_SEE_OTHER);
+            try {
+                $taskFile->setTask($task);
+                $entityManager->persist($taskFile);
+                $entityManager->flush();
+                $this->addFlash('success', 'fichier ajouté');
+                return $this->redirectToRoute('task.show', ["id" => $project->getId(), "column_id" => $column_id, 'task_id' => $task_id], Response::HTTP_SEE_OTHER);
+            } catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
         return $this->render('task/show.html.twig', [
             'task' => $task,
@@ -80,9 +90,13 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            $this->addFlash('success', 'Task edited successfully');
-            return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
+            try{
+                $entityManager->flush();
+                $this->addFlash('success', 'Task edited successfully');
+                return $this->redirectToRoute('project.show', ["id" => $project->getId()], Response::HTTP_SEE_OTHER);
+            } catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
 
         return $this->render('task/edit.html.twig', [
@@ -100,9 +114,14 @@ class TaskController extends AbstractController
         $column = $colRepo->find($column_id);
 
         if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($task);
-            $this->addFlash('danger', 'Task deleted successfully');
-            $entityManager->flush();
+            try{
+
+                $entityManager->remove($task);
+                $this->addFlash('danger', 'Task deleted successfully');
+                $entityManager->flush();
+            } catch(Exception $e) {
+                $this->addFlash('danger', "il faut supprimer les fichiers");
+            }
         }
         return $this->redirectToRoute('project.show', ["id" => $project->getId(), "column_id" => $column->getId()], Response::HTTP_SEE_OTHER);
     }

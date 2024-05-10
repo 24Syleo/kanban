@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('files.delete', {'id': project.id, 'column_id': column.id, 'task_id': task.id,'taskFile_id': task_file.id}) }}">
+<form method="post" action="{{ path('files.delete', {'id': project.id, 'column_id': column.id, 'task_id': task.id,'taskFile_id': task_file.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
 	<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task_file.id) }}">
 	<button class="btn btn-danger">Delete</button>
 </form>

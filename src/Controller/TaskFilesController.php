@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Task;
 use App\Entity\Project;
 use App\Entity\TaskFiles;
@@ -29,9 +30,13 @@ class TaskFilesController extends AbstractController
     #[Route('/{taskFile_id}', name: 'show', methods: ['GET'])]
     public function show(TaskFilesRepository $fileRepo, int $taskFile_id, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
     {
-        $column = $colRepo->find($column_id);
-        $task = $taskRepo->find($task_id);
-        $taskFile = $fileRepo->find($taskFile_id);
+        try{
+            $column = $colRepo->find($column_id);
+            $task = $taskRepo->find($task_id);
+            $taskFile = $fileRepo->find($taskFile_id);
+        } catch(Exception $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
         return $this->render('task_files/show.html.twig', [
             'task_file' => $taskFile,
             'project' => $project,
@@ -40,13 +45,20 @@ class TaskFilesController extends AbstractController
         ]);
     }
 
-    #[Route('/{taskFile_id}', name: 'delete', methods: ['POST'])]
+    #[Route('/{taskFile_id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, TaskFilesRepository $fileRepo, int $taskFile_id, EntityManagerInterface $entityManager, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
     {
         $taskFile = $fileRepo->find($taskFile_id);
-        $entityManager->remove($taskFile);
-        $entityManager->flush();
-        $this->addFlash('danger', 'fichier supprimé');
+        if ($this->isCsrfTokenValid('delete' . $taskFile->getId(), $request->getPayload()->get('_token'))) {
+            try {
+                $entityManager->remove($taskFile);
+                $this->addFlash('danger', 'fichier supprimé');
+                $entityManager->flush();
+            }catch(Exception $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+        }
+
         return $this->redirectToRoute('project.show', ["id" => $project->getId(), "column_id" => $column_id, 'task_id' => $task_id], Response::HTTP_SEE_OTHER);
     }
 }

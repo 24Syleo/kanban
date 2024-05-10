@@ -8,7 +8,9 @@
 	<tbody>
 		{% for task_file in task_files %}
 			<tr>
+				{% if task_file.filesName is defined %}
 				<td>{{ task_file.filesName }}</td>
+				{% endif %}
 				<td>
 					<a href="{{ path('files.show', {'id': project.id, 'column_id': column.id, 'task_id': task.id, 'taskFile_id': task_file.id}) }}">show</a>
 				</td>
