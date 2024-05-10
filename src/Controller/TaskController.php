@@ -93,16 +93,17 @@ class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{task_id}', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Task $task, EntityManagerInterface $entityManager, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
+    #[Route('/{task_id}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, EntityManagerInterface $entityManager, TaskRepository $taskRepo, int $task_id, Project $project, ColumnRepository $colRepo, int $column_id): Response
     {
-        $column = $colRepo->find($column_id);
         $task = $taskRepo->find($task_id);
+        $column = $colRepo->find($column_id);
+
         if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->getPayload()->get('_token'))) {
             $entityManager->remove($task);
+            $this->addFlash('danger', 'Task deleted successfully');
             $entityManager->flush();
         }
-        $this->addFlash('danger', 'Task deleted successfully');
         return $this->redirectToRoute('project.show', ["id" => $project->getId(), "column_id" => $column->getId()], Response::HTTP_SEE_OTHER);
     }
 }
